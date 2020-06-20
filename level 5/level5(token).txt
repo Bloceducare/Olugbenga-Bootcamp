@@ -1,0 +1,2 @@
+ I used the transfer function to get the tokens
+await contract.transfer(0x595d8CdE50cE11Dada63C874D6F58FffE568CF31,21)

