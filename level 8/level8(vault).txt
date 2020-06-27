@@ -1,0 +1,4 @@
+1) I accessed the private variable using ----
+web3.eth.getStorageAt(contract.address,1,console.info)
+
+2) Then I called contract.unlock using the value returned above as parameter

