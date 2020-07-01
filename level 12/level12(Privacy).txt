@@ -1,0 +1,4 @@
+1) Based on the way solidity stores data,the bytes32 data[2] variable needed to 
+unlock the Privacy contract can be found in storage slot 3. Using web3's getStorageAt
+web3.eth.getStorageAt(contract.address,3,console.info) .......which returns data[2]
+which is passed into contract.unlock() which unlocks the contract. 

