@@ -1,8 +1,7 @@
 pragma solidity ^0.6.0;
 
 // Importing OpenZeppelin's SafeMath Implementation
-import './safemath.sol';
-
+import 'https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/math/SafeMath.sol';
 contract CharityApp{
 
 using SafeMath for uint256;
