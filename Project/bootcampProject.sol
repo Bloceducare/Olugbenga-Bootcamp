@@ -1,7 +1,8 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.5.0;
 
 // Importing OpenZeppelin's SafeMath Implementation
-import 'https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/math/SafeMath.sol';
+import './safemath.sol';
+
 contract CharityApp{
 
 using SafeMath for uint256;
@@ -90,7 +91,7 @@ function createProject(uint _charityId, uint _percentToBeAdded, uint _maxNoOfDay
  bytes32 _description1, bytes32 _description2) public payable returns(uint _id) {
 
 require (msg.value >= minimumPledgeAmount);
-
+require (_percentToBeAdded >= 0);
 Project memory newproject;
 newproject.charityId = _charityId;
 newproject.creator = msg.sender;
