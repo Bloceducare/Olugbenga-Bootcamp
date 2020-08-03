@@ -77,7 +77,7 @@ Charity memory newcharity;
 newcharity.name = _name;
 newcharity.aboutUs = _aboutUs;
 newcharity.acc = msg.sender;
-_id = sub(charities.push(newcharity),1);
+_id = charities.push(newcharity).sub(1);
 charities[_id].id = _id;
 emit newCharity(_id, _name, msg.sender, _aboutUs);
 }
