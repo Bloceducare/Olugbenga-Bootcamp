@@ -1,10 +1,10 @@
 pragma solidity ^0.5.0;
 
 // Importing OpenZeppelin's SafeMath Implementation
-import 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol';
-import 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/ownership/Ownable.sol';
+import './safemath.sol';
 
 contract CharityApp{
+
 using SafeMath for uint256;
 struct Charity{
 uint id;
@@ -50,6 +50,7 @@ uint public totalEthRaised;
 uint public minimumPledgeAmount;    //The minimum amount required to fund a project
 uint public noOfSuccessfulProjects;
 uint public noOfCancelledProjects;
+address payable public owner;
 
 // Events to be emitted.
 event newProject(uint id,uint time, address creator,uint charityId,bytes32 description1,bytes32 description2);
@@ -58,8 +59,16 @@ event donationAdded(uint id,uint projectId, uint amount, address donator,uint ti
 event projectCancelled(uint projectId,uint timeCancelled,uint charityId);
 event projectSuccessful(uint projectId,uint timeSuccessful, uint projectBalance,uint charityId);
 
+constructor()public{
+    owner = msg.sender;
+}
+
 modifier onlyProjectCreator(uint _projectId){
    require(msg.sender == projects[_projectId].creator,"Only the project creator can call this function");
+    _;
+}
+modifier onlyOwner(){
+    require(msg.sender==owner);
     _;
 }
 
@@ -69,7 +78,7 @@ Charity memory newcharity;
 newcharity.name = _name;
 newcharity.aboutUs = _aboutUs;
 newcharity.acc = msg.sender;
-_id = (charities.push(newcharity)).sub(1);
+_id = charities.push(newcharity).sub(1);
 charities[_id].id = _id;
 emit newCharity(_id, _name, msg.sender, _aboutUs);
 }
@@ -82,7 +91,7 @@ function createProject(uint _charityId, uint _percentToBeAdded, uint _maxNoOfDay
  bytes32 _description1, bytes32 _description2) public payable returns(uint _id) {
 
 require (msg.value >= minimumPledgeAmount);
-
+require (_percentToBeAdded >= 0);
 Project memory newproject;
 newproject.charityId = _charityId;
 newproject.creator = msg.sender;
@@ -92,7 +101,7 @@ newproject.active = true;
 newproject.successful = false;
 newproject.initialFund = msg.value;
 newproject.projectBalance += msg.value;
-newproject.target = msg.value.add(((_percentToBeAdded.div(100)).mult(msg.value)));
+newproject.target = msg.value.add(((_percentToBeAdded.div(100)).mul(msg.value)));
 newproject.description1 = _description1;
 newproject.description2 = _description2;
 
@@ -103,7 +112,7 @@ projectsStartedByUser[msg.sender].push(_id);
 
 emit newProject(_id,now, msg.sender,_charityId, _description1, _description2);
 
-if(_multiplier == 0){
+if(_percentToBeAdded == 0){
     payout(_id);
 }
 }
