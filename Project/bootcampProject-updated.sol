@@ -171,7 +171,7 @@ function payout(uint _projectId)private{
 
 }
 
-// function to refund the project creator and all the donators to the project.
+// function to refund the project creator and all the donors to the project.
 function refundAll(uint _projectId) private{
     projects[_projectId].creator.transfer(projects[_projectId].initialFund);
     projects[_projectId].projectBalance = projects[_projectId].projectBalance.sub(projects[_projectId].initialFund);
