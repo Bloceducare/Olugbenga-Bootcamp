@@ -217,6 +217,7 @@ function returnDonationDetails(uint _donationId) public view returns(
     }
     
 function returnRemainingFundsNeeded(uint _projectId) public view returns(uint){
+    require(projects[_projectId].active == true);
     return(projects[_projectId].target.sub(projects[_projectId].projectBalance));
 }
 
