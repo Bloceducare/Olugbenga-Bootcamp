@@ -100,7 +100,7 @@ newproject.active = true;
 newproject.successful = false;
 newproject.initialFund = msg.value;
 newproject.projectBalance += msg.value;
-newproject.target = msg.value.add(((_percentToBeAdded.div(100)).mul(msg.value)));
+newproject.target = msg.value.add((_percentToBeAdded.mul(msg.value)).div(100));
 newproject.description = _description;
 totalEthRaised =  totalEthRaised.add(msg.value);
 _id = projects.push(newproject).sub(1);
@@ -177,7 +177,7 @@ function refundAll(uint _projectId) private{
     projects[_projectId].projectBalance = projects[_projectId].projectBalance.sub(projects[_projectId].initialFund);
     uint len = DonationsToAProject[_projectId].length;
     uint[]memory _DonationsToProjectId = new uint[](len);
-
+    _DonationsToProjectId = DonationsToAProject[_projectId];
     for (uint index = 0; index < len; index++) {
        uint _donationId = _DonationsToProjectId[index];
        donations[_donationId].donator.transfer(donations[_donationId].amount);
