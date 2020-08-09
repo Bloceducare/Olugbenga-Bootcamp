@@ -225,7 +225,8 @@ function generalInfo() public view returns(uint,uint,uint,uint){
     uint noOfActiveProjects = projects.length.sub(noOfCancelledProjects.add(noOfSuccessfulProjects));
     return(charities.length,projects.length,donations.length,noOfActiveProjects);
 }
-function transferOwnership(address _newOwner)public onlyOwner{
+
+function transferOwnership(address payable _newOwner)public onlyOwner{
 owner = _newOwner;
 }
 function()external payable{
