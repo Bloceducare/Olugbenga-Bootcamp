@@ -8,9 +8,9 @@ contract CharityApp{
 using SafeMath for uint256;
 struct Charity{
 uint id;
-bytes32 name;
+string name;
 address payable acc;
-bytes32 aboutUs;
+string aboutUs;
 }
 
 //
@@ -26,8 +26,7 @@ struct Project{
     uint projectBalance;
     bool active;
     bool successful;
-    bytes32 description1; // extra info about the project
-    bytes32 description2;
+    string description; // extra info about the project
 }
 
 struct Donation{
@@ -53,8 +52,8 @@ uint public noOfCancelledProjects;
 address payable public owner;
 
 // Events to be emitted.
-event newProject(uint id,uint time, address creator,uint charityId,bytes32 description1,bytes32 description2);
-event newCharity(uint id, bytes32 name,address acc, bytes32 aboutUs);
+event newProject(uint id,uint time, address creator,uint charityId,string description);
+event newCharity(uint id, string name,address acc, string aboutUs);
 event donationAdded(uint id,uint projectId, uint amount, address donator,uint timeSent);
 event projectCancelled(uint projectId,uint timeCancelled,uint charityId);
 event projectSuccessful(uint projectId,uint timeSuccessful, uint projectBalance,uint charityId);
@@ -73,7 +72,7 @@ modifier onlyOwner(){
 }
 
 // function to register a charity, returns the charity id.
-function registerCharity(bytes32 _name,bytes32 _aboutUs) public returns(uint _id) {
+function registerCharity(string memory _name,string memory _aboutUs) public returns(uint _id) {
 Charity memory newcharity;
 newcharity.name = _name;
 newcharity.aboutUs = _aboutUs;
@@ -88,7 +87,7 @@ emit newCharity(_id, _name, msg.sender, _aboutUs);
  Calls the function payout() if the _percentToBeAdded is set to 0
  */
 function createProject(uint _charityId, uint _percentToBeAdded, uint _maxNoOfDays,
- bytes32 _description1, bytes32 _description2) public payable returns(uint _id) {
+ string memory _description) public payable returns(uint _id) {
 
 require (msg.value >= minimumPledgeAmount);
 require (_percentToBeAdded >= 0);
@@ -101,16 +100,14 @@ newproject.active = true;
 newproject.successful = false;
 newproject.initialFund = msg.value;
 newproject.projectBalance += msg.value;
-newproject.target = msg.value.add(((_percentToBeAdded.div(100)).mul(msg.value)));
-newproject.description1 = _description1;
-newproject.description2 = _description2;
-
+newproject.target = msg.value.add((_percentToBeAdded.mul(msg.value)).div(100));
+newproject.description = _description;
 totalEthRaised =  totalEthRaised.add(msg.value);
 _id = projects.push(newproject).sub(1);
 projects[_id].id = _id;
 projectsStartedByUser[msg.sender].push(_id);
 
-emit newProject(_id,now, msg.sender,_charityId, _description1, _description2);
+emit newProject(_id,now, msg.sender,_charityId, _description);
 
 if(_percentToBeAdded == 0){
     payout(_id);
@@ -161,7 +158,7 @@ emit projectCancelled(_projectId, now, _charityId);
 }
 
 // Transfers fund to the charity address and tags the project successful.  
-function payout(uint _projectId)private returns (bool){
+function payout(uint _projectId)private{
     uint _charityId = projects[_projectId].charityId;
     uint balance = projects[_projectId].projectBalance;
     charities[_charityId].acc.transfer(balance);
@@ -174,13 +171,13 @@ function payout(uint _projectId)private returns (bool){
 
 }
 
-// function to refund the project creator and all the donators to the project.
+// function to refund the project creator and all the donors to the project.
 function refundAll(uint _projectId) private{
     projects[_projectId].creator.transfer(projects[_projectId].initialFund);
     projects[_projectId].projectBalance = projects[_projectId].projectBalance.sub(projects[_projectId].initialFund);
     uint len = DonationsToAProject[_projectId].length;
     uint[]memory _DonationsToProjectId = new uint[](len);
-
+    _DonationsToProjectId = DonationsToAProject[_projectId];
     for (uint index = 0; index < len; index++) {
        uint _donationId = _DonationsToProjectId[index];
        donations[_donationId].donator.transfer(donations[_donationId].amount);
@@ -195,7 +192,7 @@ function adjustMinimumPledgeAmount (uint _newMinimum) public onlyOwner {
     }
 
 
-function returnCharityDetails(uint _charityId)public view returns(bytes32,address,bytes32){
+function returnCharityDetails(uint _charityId)public view returns(string memory,address,string memory){
 return (charities[_charityId].name, charities[_charityId].acc,charities[_charityId].aboutUs);
 
 }
@@ -208,10 +205,9 @@ function returnProjectDetails(uint _projectId)public view returns
 }
 
 function returnProjectDetails2(uint _projectId)public view returns 
-(uint,bool,bool,bytes32,bytes32){
+(uint,bool,bool,string memory){
     return(projects[_projectId].projectBalance,projects[_projectId].active,
-    projects[_projectId].successful,projects[_projectId].description1,
-    projects[_projectId].description2);
+    projects[_projectId].successful,projects[_projectId].description);
 }
 
 function returnDonationDetails(uint _donationId) public view returns(
@@ -221,12 +217,20 @@ function returnDonationDetails(uint _donationId) public view returns(
     }
     
 function returnRemainingFundsNeeded(uint _projectId) public view returns(uint){
+    require(projects[_projectId].active == true);
     return(projects[_projectId].target.sub(projects[_projectId].projectBalance));
 }
 
 function generalInfo() public view returns(uint,uint,uint,uint){
     uint noOfActiveProjects = projects.length.sub(noOfCancelledProjects.add(noOfSuccessfulProjects));
     return(charities.length,projects.length,donations.length,noOfActiveProjects);
+}
+
+function transferOwnership(address payable _newOwner)public onlyOwner{
+owner = _newOwner;
+}
+function()external payable{
+    
 }
 
 }
